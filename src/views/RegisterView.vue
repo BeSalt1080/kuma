@@ -26,7 +26,7 @@ async function register() {
 }
 </script>
 <template>
-    <div class="flex justify-center items-center w-full h-full font-semibold text-gray-600">
+    <div class="flex justify-center items-center w-full min-h-dvh  font-semibold text-gray-600">
         <div class="w-96 bg-white rounded-sm p-5 flex flex-col gap-6 shadow-lg border-2 border-green-400">
             <h1 class="text-center text-3xl font-bold text-black">CREATE AN ACCOUNT</h1>
 

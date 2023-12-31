@@ -9,12 +9,12 @@ const currentpath = router.currentRoute
 
 </script>
 
-<template class="overflow-x-clip">
+<template class="overflow-x-clip min-h-dvh">
   <header v-if="!currentpath.fullPath.startsWith('/dashboard')">
     <Navbar />
   </header>
-  <main class="min-h-dvh h-dvh w-vw overflow-x-clip">
-    <RouterView class="h-full"/>
+  <main class="h-full w-vw overflow-x-clip">
+    <RouterView class="h-full w-full"/>
   </main>
   <footer>
     <Footer />

@@ -26,7 +26,7 @@ async function login() {
 }
 </script>
 <template>
-    <div class="flex justify-center items-center h-full w-full font-semibold text-gray-600">
+    <div class="flex justify-center items-center min-h-dvh w-full font-semibold text-gray-600">
         <div class="w-96 bg-white rounded-sm p-5 flex flex-col gap-6 shadow-lg border-2 border-green-400">
             <h1 class="text-center text-3xl font-bold text-black">Login</h1>
             <form @submit.prevent="login" class="flex-col justify-center gap-1 flex">
