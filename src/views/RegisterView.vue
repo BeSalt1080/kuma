@@ -8,7 +8,7 @@ const password = ref('');
 const repassword = ref('');
 const errors = ref('');
 
-async function loginSubmit() {
+async function register() {
     errors.value = ''
     await axios.post('http://127.0.0.1:5000/register', {
         name: name.value,
@@ -29,7 +29,7 @@ async function loginSubmit() {
     <div class="flex justify-center my-12">
         <div class="w-1/2 bg-slate-500 p-5">
             <h1 class="text-center text-3xl font-bold">CREATE AN ACCOUNT</h1>
-            <form @submit.prevent="loginSubmit" class="">
+            <form @submit.prevent="register" class="">
                 <div class="w-full">
                     <label for="">Full Name</label>
                     <input type="text" class="block w-full" v-model="name" id="">
