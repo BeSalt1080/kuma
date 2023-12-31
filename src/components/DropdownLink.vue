@@ -15,8 +15,8 @@ defineProps({
             {{ title }}<DropdownIcon width="24px"/>
         </div>
         <div class="absolute pt-5" v-show="isHovered">
-            <div class="border bg-white -translate-x-5 py-5 text-sm shadow-md">
-                <slot />
+            <div class="border bg-white -translate-x-5 py-5 text-sm shadow-md flex flex-col">
+                <slot/>
             </div>
         </div>
     </div>

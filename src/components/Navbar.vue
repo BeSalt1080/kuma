@@ -15,29 +15,29 @@ import Wishlist from './Wishlist.vue';
             <div class="flex gap-4 uppercase font-bold">
                 <div>latest</div>
                 <DropdownLink title="Men">
-                    <RouterLink class="px-4 block hover:bg-slate-400 transition-all ease-in-out" to="/men/new-arrival">New
+                    <RouterLink class="px-5 py-2 hover:bg-green-400" to="/men/new-arrival">New
                         Arrival</RouterLink>
-                    <RouterLink class="px-4 block hover:bg-slate-400 transition-all ease-in-out" to="/men/footwear">Footwear
+                    <RouterLink class="px-5 py-2 hover:bg-green-400" to="/men/footwear">Footwear
                     </RouterLink>
-                    <RouterLink class="px-4 block hover:bg-slate-400 transition-all ease-in-out" to="/men/aparrel">Aparrel
+                    <RouterLink class="px-5 py-2 hover:bg-green-400" to="/men/aparrel">Aparrel
                     </RouterLink>
                 </DropdownLink>
                 <DropdownLink title="Women">
-                    <RouterLink class="px-4 block hover:bg-slate-400 transition-all ease-in-out" to="/women/new-arrival">New
+                    <RouterLink class="px-5 py-2 hover:bg-green-400" to="/women/new-arrival">New
                         Arrival</RouterLink>
-                    <RouterLink class="px-4 block hover:bg-slate-400 transition-all ease-in-out" to="/women/footwear">
+                    <RouterLink class="px-5 py-2 hover:bg-green-400" to="/women/footwear">
                         Footwear</RouterLink>
-                    <RouterLink class="px-4 block hover:bg-slate-400 transition-all ease-in-out" to="/women/aparrel">Aparrel
+                    <RouterLink class="px-5 py-2 hover:bg-green-400" to="/women/aparrel">Aparrel
                     </RouterLink>
                 </DropdownLink>
                 <DropdownLink title="Kids">
-                    <RouterLink class="px-4 block hover:bg-slate-400 transition-all ease-in-out" to="/kids/footwear">
+                    <RouterLink class="px-5 py-2 hover:bg-green-400" to="/kids/footwear">
                         Footwear</RouterLink>
-                    <RouterLink class="px-4 block hover:bg-slate-400 transition-all ease-in-out" to="/kids/aparrel">Aparrel
+                    <RouterLink class="px-5 py-2 hover:bg-green-400" to="/kids/aparrel">Aparrel
                     </RouterLink>
                 </DropdownLink>
-                <div>Accessories</div>
-                <div>Sale</div>
+                <RouterLink to="/accessory">Accessories</RouterLink>
+                <RouterLink to="/sale">Sale</RouterLink>
             </div>
         </div>
         <div class="flex gap-4">
