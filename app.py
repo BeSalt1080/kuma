@@ -518,8 +518,10 @@ def product():
         cursor.close()   
         response = jsonify("successfuly deleted")
         return response, 200
+    
 
 @app.route('/product_get', methods=['GET'])
+@jwt_required(optional=True)
 def product_select():
     cursor = mysql.connection.cursor()
     if request.args.get('id') is None:
@@ -527,7 +529,22 @@ def product_select():
     else:
         cursor.execute(f'select p.* ,b.name as brand, c.name as category, g.name as gender from products p, brands b, categories c, genders g where b.id = p.brands_id and c.id = p.categories_id and g.id = p.genders_id and p.id={request.args.get("id")} ')
     products = []
-    for product in cursor.fetchall():
+    fetch = cursor.fetchall()
+        
+    for product in fetch:
+        tempSize = []
+        wishlist = []
+        if get_jwt_identity() is not None:
+            cursor.execute(f'select id from wishlists where products_id={product[0]} and users_id={get_jwt_identity()}')
+            wishlist = cursor.fetchone()
+        cursor.execute(f'select s.id, s.name, ps.stocks, ps.id from products_sizes ps, sizes s, products p where p.id=ps.products_id and ps.sizes_id=s.id and p.id={product[0]} ')
+        for size in cursor.fetchall():
+            tempSize.append({
+                "id":size[0],
+                "name":size[1],
+                "quantity":size[2],
+                "products_sizes_id":[3]
+            })
         products.append({
             "id": product[0],
             "name": product[1],
@@ -544,6 +561,8 @@ def product_select():
             "brand": product[12],
             "category": product[13],
             "gender": product[14],
+            "sizes": tempSize,
+            "wishlist": wishlist 
         })
     cursor.close()   
     response = jsonify(products)
@@ -551,6 +570,44 @@ def product_select():
 
 
 
+
+
+
+
+
+
+
+@app.route('/wishlist', methods=['POST','DELETE'])
+@jwt_required()
+def wishlist():
+    if request.method == 'POST':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'insert into wishlists(products_id,users_id) values({request.form.get("products_id")},{get_jwt_identity()})')
+        mysql.connection.commit()
+        cursor.close()   
+        response = jsonify("successfuly created")
+        return response, 201  
+    if request.method == 'DELETE':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'delete from wishlists where id={request.form.get("id")}')
+        mysql.connection.commit()
+        cursor.close()   
+        response = jsonify("successfuly deleted")
+        return response, 200
+    
+@app.route('/wishlist_check', methods=['GET'])
+@jwt_required()
+def wishlist_check():
+    cursor = mysql.connection.cursor()
+    cursor.execute(f'select * from wishlists where products_id={request.form.get("products_id")} and users_id={get_jwt_identity()})')
+    mysql.connection.commit()
+    cursor.close()   
+    response = jsonify("successfuly created")
+    return response, 201
+    
+    
+    
+    
 
 
 @app.route('/migrate', methods=['POST'])
