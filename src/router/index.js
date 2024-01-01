@@ -57,7 +57,6 @@ const router = createRouter({
       path: "/product/:id",
       name: "product.show",
       component: DetailedView,
-      props: true
     },
     {
       path: "/latest",

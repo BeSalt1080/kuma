@@ -17,6 +17,7 @@ import { RouterLink } from 'vue-router'
                 </div>
                 <div class="w-1/2">
                     Connect With Us
+                    <i class="fas fa-facebook"></i>
                 </div>
             </div>
 

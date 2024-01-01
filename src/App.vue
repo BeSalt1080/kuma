@@ -4,7 +4,6 @@ import Navbar from '@/components/Navbar.vue';
 import Footer from './components/Footer.vue';
 import router from './router';
 
-console.log(router)
 const currentpath = router.currentRoute 
 
 </script>
@@ -16,7 +15,7 @@ const currentpath = router.currentRoute
   <main class="min-h-screen">
     <RouterView />
   </main>
-  <footer>
+  <footer v-if="!currentpath.fullPath.startsWith('/dashboard')">
     <Footer />
   </footer>
 </template>

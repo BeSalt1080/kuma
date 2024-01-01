@@ -522,8 +522,10 @@ def product():
 @app.route('/product_get', methods=['GET'])
 def product_select():
     cursor = mysql.connection.cursor()
-    cursor.execute('select p.* ,b.name as brand, c.name as category, g.name as gender from products p, brands b, categories c, genders g where b.id = p.brands_id and c.id = p.categories_id and g.id = p.genders_id')
-    # products = cursor.fetchall()
+    if request.args.get('id') is None:
+        cursor.execute('select p.* ,b.name as brand, c.name as category, g.name as gender from products p, brands b, categories c, genders g where b.id = p.brands_id and c.id = p.categories_id and g.id = p.genders_id')
+    else:
+        cursor.execute(f'select p.* ,b.name as brand, c.name as category, g.name as gender from products p, brands b, categories c, genders g where b.id = p.brands_id and c.id = p.categories_id and g.id = p.genders_id and p.id={request.args.get("id")} ')
     products = []
     for product in cursor.fetchall():
         products.append({
