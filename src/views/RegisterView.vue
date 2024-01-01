@@ -26,37 +26,44 @@ async function register() {
 }
 </script>
 <template>
-    <div class="flex justify-center my-12">
-        <div class="w-1/2 bg-slate-500 p-5">
-            <h1 class="text-center text-3xl font-bold">CREATE AN ACCOUNT</h1>
+    <div class="flex justify-center items-center w-full min-h-dvh  font-semibold text-gray-600">
+        <div class="w-96 bg-white rounded-sm p-5 flex flex-col gap-6 shadow-lg border-2 border-green-400">
+            <h1 class="text-center text-3xl font-bold text-black">CREATE AN ACCOUNT</h1>
+
             <form @submit.prevent="register" class="">
                 <div class="w-full">
                     <label for="">Full Name</label>
-                    <input type="text" class="block w-full" v-model="name" id="">
+                    <input type="text" class="w-full border-gray-400 rounded-md" v-model="name" id="">
                     <div class="text-red-300">{{ errors.name }}</div>
                 </div>
                 <div class="w-full">
                     <label for="">Email</label>
-                    <input type="email" class="block w-full" v-model="email" id="">
+                    <input type="email" class="w-full border-gray-400 rounded-md" v-model="email" id="">
                     <div class="text-red-300">{{ errors.email }}</div>
                 </div>
                 <div class="w-full">
                     <label for="">Password</label>
-                    <input type="password" class="block w-full" v-model="password" id="">
+                    <input type="password" class="w-full border-gray-400 rounded-md" v-model="password" id="">
                     <div class="text-red-300">{{ errors.password }}</div>
                 </div>
                 <div class="w-full">
                     <label for="">Confirm Password</label>
-                    <input type="password" class="block w-full" v-model="repassword" id="">
+                    <input type="password" class="w-full border-gray-400 rounded-md" v-model="repassword" id="">
                 </div>
-                <div>
-                    <input type="checkbox" name="" id="">I have read and agree to the Terms and Condition that apply
+                <div class="mt-5">
+                    <input type="checkbox" name="agreement" id="agreement">
+                <label for="agreement" class="select-none">
+                    I have read and agree to the Terms and Condition that apply
+                </label>
                 </div>
-                <div>
-                    <button class="px-2 py-3 bg-primary4" >Register</button>
-                </div>
-                <div>
-                    Already a user? Login
+                <button class="p-2 rounded-md font-semi my-5 bg-gray-200 hover:text-black hover:bg-green-400 w-full" >Register</button>
+
+                <div class="flex flex-col gap-1 w-fit">
+                    <RouterLink to="/login" class="text-green-500 hover:text-green-600 cursor-pointer">
+                        Forgot Password?
+                    </RouterLink>
+                    <div class="border-t-2 border-gray-400"></div>
+                    <p>Already have an account? <RouterLink to="/login" class="text-green-500 hover:text-green-600 cursor-pointer">Login</RouterLink></p>
                 </div>
             </form>
         </div>

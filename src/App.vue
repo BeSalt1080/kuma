@@ -4,18 +4,19 @@ import Navbar from '@/components/Navbar.vue';
 import Footer from './components/Footer.vue';
 import router from './router';
 
+console.log(router)
 const currentpath = router.currentRoute 
 
 </script>
 
-<template>
+<template class="overflow-x-clip min-h-dvh">
   <header v-if="!currentpath.fullPath.startsWith('/dashboard')">
     <Navbar />
   </header>
-  <main class="min-h-screen">
-    <RouterView />
+  <main class="h-full w-vw overflow-x-clip">
+    <RouterView class="h-full w-full"/>
   </main>
-  <footer v-if="!currentpath.fullPath.startsWith('/dashboard')">
+  <footer>
     <Footer />
   </footer>
 </template>
