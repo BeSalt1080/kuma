@@ -3,12 +3,13 @@ import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth.js'
 import ProfileIcon from './icons/ProfileIcon.vue';
 import router from '../router';
+
 const isHovered = ref(0);
 
 const store = useAuthStore()
 
 async function logout(){
-    store.logoutUser()
+    await store.logoutUser()
     router.push('login');
 }
 
