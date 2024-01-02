@@ -4,6 +4,7 @@ import ToggleList from '@/components/ToggleList.vue';
 import Product from '../../components/Product.vue'
 import { ref,defineProps, toRefs, watch, onMounted, onUpdated } from 'vue';
 import { useRouter } from 'vue-router';
+import PrimaryButton from '@/components/PrimaryButton.vue';
 
 const router = useRouter().currentRoute.value
 
@@ -181,12 +182,13 @@ watch(category, ()=>{
 
 </script>
 <template>
-    <div class="p-10 ">
+    <div class="p-10 w-full">
         <h1 class="text-center text-xl font-bold ">{{ category }}</h1>
         <div class="flex gap-5">
             <div class="w-1/6">
                 <div class="border-b-black border-b">
-                    Home / {{ category }} / {{ router.params.categories }}
+                    Home / {{ category }} {{ $route.params.categories === undefined ? null : '/' + $route.params.categories }}
+
                 </div>
                 <hr>
                 <ToggleList title="Brand">
@@ -229,8 +231,8 @@ watch(category, ()=>{
                     <hr class="mt-5">
                 </ToggleList>
                 <ToggleList title="Size">
-                    <div class="grid grid-cols-4 gap-3">
-                        <div class="cursor-pointer w-full p-3 border text-center"
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div class="cursor-pointer w-full py-2 border text-center"
                             :class="{ 'border-green-300 bg-green-100': sizefilter == size.id }" v-for="size in sizes"
                             :key="size.id" @click="() => {
                                 sizefilter = size.id
@@ -243,9 +245,18 @@ watch(category, ()=>{
                 </ToggleList>
                 <ToggleList title="Price">
                     <div>
-                        <input class="w-full " type="text">
-                        <input class="w-full " type="text">
-                        <button class="p-4 w-full bg-green-400">Apply</button>
+                        <div class="w-full">
+                    <label for="price_min">Min</label>
+                    <input type="text" class="w-full border-gray-400 rounded-md" v-model="pricefilter.min" name="price_min" id="price_min">
+                </div>          
+                <div class="w-full">
+                    <label for="price_max">Max</label>
+                    <input type="text" class="w-full border-gray-400 rounded-md" v-model="pricefilter.max" name="password" id="price_max">
+                </div>
+                        <!-- <input class="w-full " type="text">
+                        <input class="w-full " type="text"> -->
+                        <!-- <button class="p-4 w-full bg-green-400">Apply</button> -->
+                        <PrimaryButton class="w-full mt-3 font-semibold">Apply</PrimaryButton>
                     </div>
                     <hr class="mt-5">
                 </ToggleList>

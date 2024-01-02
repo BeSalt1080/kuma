@@ -1,4 +1,5 @@
 <script setup>
+import PrimaryButton from '@/components/PrimaryButton.vue';
 import axios from 'axios'
 import { ref } from 'vue';
 
@@ -56,7 +57,9 @@ async function register() {
                     I have read and agree to the Terms and Condition that apply
                 </label>
                 </div>
-                <button class="p-2 rounded-md font-semi my-5 bg-gray-200 hover:text-black hover:bg-green-400 w-full" >Register</button>
+                <PrimaryButton class="my-5 w-full" type="submit"> Register</PrimaryButton>
+                <!-- <button class="p-2 rounded-md font-semi my-5 bg-gray-200 hover:text-black hover:bg-green-400 w-full" >Register</button> -->
+                
 
                 <div class="flex flex-col gap-1 w-fit">
                     <RouterLink to="/login" class="text-green-500 hover:text-green-600 cursor-pointer">

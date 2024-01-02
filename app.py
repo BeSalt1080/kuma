@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '1080'
+app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'kuma'
 app.config['JWT_SECRET_KEY'] = '56b80543728020a3cd8d0ac0344b4b6d51c5af91ce8ee0d215983d0550a057be'
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
@@ -82,6 +82,17 @@ def login():
     if v.validate(request.form):
         email = request.form.get('email')
         password = request.form.get('password')
+        
+        # print(email)
+        # print(password)
+        
+        if email == "" or password == "":
+            v.errors['email'] = 'email or password cannot be empty'
+            response = make_response(
+                    jsonify({'error': v.errors}),
+                    422)
+            return response
+        
         cursor = mysql.connection.cursor()
         cursor.execute(f'select * from users where email = "{email}"')
         user = cursor.fetchone()
@@ -99,6 +110,7 @@ def login():
         jsonify({'error': v.errors}),
         422
     )
+    
     response.headers["Content-Type"] = "application/json"
     return response
 

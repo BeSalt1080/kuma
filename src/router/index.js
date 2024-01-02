@@ -83,16 +83,19 @@ const router = createRouter({
       path: "/wishlist",
       name: "wishlist",
       component: WishlistView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/account",
       name: "account",
       component: AccountView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/account/info",
       name: "account.info",
       component: AccountInfoView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/address",
@@ -134,27 +137,31 @@ const router = createRouter({
       path: "/cart",
       name: "cart",
       component: CartView,
-      meta: { requiresAuth: true}
+      meta: { requiresAuth: true },
     },
     {
       path: "/order",
       name: "order",
       component: OrderView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/order/detail",
       name: "order.detail",
       component: OrderDetailedView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/order/checkout",
       name: "order.checkout",
       component: CheckoutView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/order/payment",
       name: "order.payment",
       component: PaymentView,
+      meta: { requiresAuth: true },
     },
     {
       path: "/dashboard",
@@ -163,7 +170,6 @@ const router = createRouter({
       meta: {
         isAdmin: true,
       },
-      props: { admin: "hello world" },
       children: [
         {
           path: "product",
@@ -199,7 +205,6 @@ const router = createRouter({
           path: "shipping",
           name: "shipping",
           component: () => import("../views/Admin/Shipping/Index.vue"),
-          
         },
         {
           path: "shipping/create",
