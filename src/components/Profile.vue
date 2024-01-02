@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth.js'
 import ProfileIcon from './icons/ProfileIcon.vue';
-import router from '@/router';
+import router from '../router';
 const isHovered = ref(0);
 
 const store = useAuthStore()
@@ -29,13 +29,13 @@ async function logout(){
                     </RouterLink>
                 </div>
                 <div v-else>
-                    <RouterLink class="px-4 block p-2 hover:bg-green-400 transition-all ease-in-out" to="/account">
+                    <RouterLink class="px-4 block p-2 hover:bg-green-400 transition-all ease-in-out" :to="{name:'account'}">
                         My Account
                     </RouterLink>
-                    <RouterLink class="px-4 block p-2 hover:bg-green-400 transition-all ease-in-out" to="/orders">
+                    <RouterLink class="px-4 block p-2 hover:bg-green-400 transition-all ease-in-out" :to="{name:'order'}">
                         My Orders
                     </RouterLink>
-                    <RouterLink class="px-4 block p-2 hover:bg-green-400 transition-all ease-in-out" to="/adress">
+                    <RouterLink class="px-4 block p-2 hover:bg-green-400 transition-all ease-in-out" :to="{name:'address'}">
                         Address Book
                     </RouterLink>
                     <a class="px-4 block p-2 hover:bg-green-400 transition-all ease-in-out cursor-pointer" @click="logout">

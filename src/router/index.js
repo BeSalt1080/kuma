@@ -6,8 +6,17 @@ import PolicyView from "../views/PolicyView.vue";
 import TermsView from "../views/TermsView.vue";
 import ContactView from "../views/ContactView.vue";
 import ProductView from "../views/Product/ProductView.vue";
-import { useAuthStore } from "@/stores/auth";
-import DetailedView from "@/views/Product/DetailedView.vue";
+import { useAuthStore } from "../stores/auth";
+import DetailedView from "../views/Product/DetailedView.vue";
+import OrderDetailedView from "../views/User/Order/DetailedView.vue";
+import CartView from "../views/CartView.vue";
+import CheckoutView from "../views/CheckoutView.vue";
+import PaymentView from "../views/PaymentView.vue";
+import OrderView from "@/views/User/Order/OrderView.vue";
+import AccountInfoView from "@/views/User/AccountInfoView.vue";
+import AccountView from "@/views/User/AccountView.vue";
+import AddressView from "@/views/User/AddressView.vue";
+import WishlistView from "@/views/User/WishlistView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -71,6 +80,27 @@ const router = createRouter({
       props: { category: "Sale" },
     },
     {
+      path: "/wishlist",
+      name: "wishlist",
+      component: WishlistView,
+    },
+    {
+      path: "/account",
+      name: "account",
+      component: AccountView,
+    },
+    {
+      path: "/account/info",
+      name: "account.info",
+      component: AccountInfoView,
+    },
+    {
+      path: "/address",
+      name: "address",
+      component: AddressView,
+    },
+
+    {
       path: "/accessory",
       name: "accessory",
       component: ProductView,
@@ -99,6 +129,31 @@ const router = createRouter({
       name: "kids",
       component: ProductView,
       props: { category: "Kids" },
+    },
+    {
+      path: "/cart",
+      name: "cart",
+      component: CartView,
+    },
+    {
+      path: "/order",
+      name: "order",
+      component: OrderView,
+    },
+    {
+      path: "/order/detail",
+      name: "order.detail",
+      component: OrderDetailedView,
+    },
+    {
+      path: "/order/checkout",
+      name: "order.checkout",
+      component: CheckoutView,
+    },
+    {
+      path: "/order/payment",
+      name: "order.payment",
+      component: PaymentView,
     },
     {
       path: "/dashboard",
@@ -201,7 +256,7 @@ const router = createRouter({
         },
         {
           path: "order",
-          name: "order",
+          name: "order.index",
           component: () => import("../views/Admin/Order/Index.vue"),
         },
         {

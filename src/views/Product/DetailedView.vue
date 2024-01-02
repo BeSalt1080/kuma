@@ -1,13 +1,14 @@
 <script setup>
 import { authService } from '@/api';
 import { ref, onMounted } from 'vue';
-import router from '@/router'
+import router from '../../router'
 
 const route = router.currentRoute
 
 const product = ref('')
 const selectedSize = ref('')
 const sizeArray = ref([])
+const quantity = ref(1)
 
 const fetchData = async () => {
     try {
@@ -49,8 +50,22 @@ const wishlist = async () => {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 }
             })
-            fetchData()
+        fetchData()
     }
+}
+
+const addToCart = async () => {
+    const data = {
+        products_id: product.value.id,
+        quantity: quantity.value,
+        sizes_id: selectedSize.value
+    }
+    await authService.post('/cart', data, {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    });
+    fetchData()
 }
 
 onMounted(() => {
@@ -58,7 +73,7 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div class="flex flex-1 justify-center mt-20">
+    <div class="flex flex-1 justify-center mt-14">
         <div class="w-2/3">
             <span>Home / {{ product.gender }} / {{ product.category }}</span>
             <div class="flex">
@@ -87,17 +102,23 @@ onMounted(() => {
                             </div>
                         </div>
                     </div>
+                    <div class="my-5" v-if="selectedSize">
+                        <label for="quantity">Quantity:</label>
+                        <input v-model="quantity" class="block" min="1"
+                            :max="sizeArray.filter(size => { return size.id == selectedSize })[0].quantity" type="number">
+                    </div>
                     <div class="flex gap-5 items-center">
-                        <button class="px-2 py-4 bg-green-400 hover:bg-green-300 rounded-lg">
+                        <button class="p-4 bg-green-400 hover:bg-green-300 rounded-lg" @click="addToCart">
                             <i class="fas fa-shopping-cart"></i> Add to Cart
                         </button>
                         <button class="border rounded-full w-14 h-14" @click="wishlist">
-                            <i class="fa-regular fa-heart text-2xl mt-1" :class="{'text-red-600 fa-solid':product.wishlist}"></i>
+                            <i class="fa-regular fa-heart text-2xl mt-1"
+                                :class="{ 'text-red-600 fa-solid': product.wishlist }"></i>
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="flex border p-5">
+            <div class="flex border p-5 shadow-lg mb-10">
                 <div class="w-1/2 p-5">
                     <h2 class="text-2xl font-bold text-green-800">Description</h2>
                     <span class="text-xs">{{ product.description }}</span>

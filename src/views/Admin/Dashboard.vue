@@ -34,7 +34,7 @@ import Profile from '@/components/Profile.vue';
             <router-link :to="{ name: 'product' }" class="sidebar-link" :class="{ 'active': currentRoute === 'product' }">
                 <i class="fas fa-box mr-2"></i> Product
             </router-link>
-            <router-link :to="{ name: 'order' }" class="sidebar-link" :class="{ 'active': currentRoute === 'order' }">
+            <router-link :to="{ name: 'order.index' }" class="sidebar-link" :class="{ 'active': currentRoute === 'order' }">
                 <i class="fas fa-shopping-cart mr-2"></i> Order
             </router-link>
 

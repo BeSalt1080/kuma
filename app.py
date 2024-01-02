@@ -525,9 +525,9 @@ def product():
 def product_select():
     cursor = mysql.connection.cursor()
     if request.args.get('id') is None:
-        cursor.execute('select p.* ,b.name as brand, c.name as category, g.name as gender from products p, brands b, categories c, genders g where b.id = p.brands_id and c.id = p.categories_id and g.id = p.genders_id')
+        cursor.execute('select p.* ,b.name as brand, c.name as category, g.name as gender from products p, brands b, categories c, genders g where b.id = p.brands_id and c.id = p.categories_id and g.id = p.genders_id order by p.id desc')
     else:
-        cursor.execute(f'select p.* ,b.name as brand, c.name as category, g.name as gender from products p, brands b, categories c, genders g where b.id = p.brands_id and c.id = p.categories_id and g.id = p.genders_id and p.id={request.args.get("id")} ')
+        cursor.execute(f'select p.* ,b.name as brand, c.name as category, g.name as gender from products p, brands b, categories c, genders g where b.id = p.brands_id and c.id = p.categories_id and g.id = p.genders_id and p.id={request.args.get("id")} order by p.id desc')
     products = []
     fetch = cursor.fetchall()
         
@@ -537,7 +537,7 @@ def product_select():
         if get_jwt_identity() is not None:
             cursor.execute(f'select id from wishlists where products_id={product[0]} and users_id={get_jwt_identity()}')
             wishlist = cursor.fetchone()
-        cursor.execute(f'select s.id, s.name, ps.stocks, ps.id from products_sizes ps, sizes s, products p where p.id=ps.products_id and ps.sizes_id=s.id and p.id={product[0]} ')
+        cursor.execute(f'select s.id, s.name, ps.stocks, ps.id from products_sizes ps, sizes s, products p where p.id=ps.products_id and ps.sizes_id=s.id and p.id={product[0]}')
         for size in cursor.fetchall():
             tempSize.append({
                 "id":size[0],
@@ -568,14 +568,98 @@ def product_select():
     response = jsonify(products)
     return response
 
+@app.route('/cart', methods=['POST','DELETE','PUT','GET'])
+@jwt_required()
+def cart():
+    if request.method == 'POST':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'insert into carts(products_id,users_id,quantity,sizes_id) values({request.form.get("products_id")},{get_jwt_identity()},{request.form.get("quantity")},{request.form.get("sizes_id")})')
+        mysql.connection.commit()
+        cursor.close()   
+        response = jsonify("successfuly created")
+        return response, 201  
+    if request.method == 'PUT':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'update carts set quantity={request.form.get("quantity")} where id={request.form.get("id")}')
+        mysql.connection.commit()
+        cursor.close()
+        response = jsonify("successfuly deleted")
+        return response, 200
+    if request.method == 'DELETE':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'delete from carts where id={request.form.get("id")}')
+        mysql.connection.commit()
+        cursor.close()   
+        response = jsonify("successfuly deleted")
+        return response, 200
+    if request.method == 'GET':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'select p.id, p.name, p.image, p.color, s.name, cat.name, p.price, p.sale, c.quantity, s.id from carts c, sizes s, products p, categories cat where users_id={get_jwt_identity()} and c.products_id = p.id and p.categories_id = cat.id and c.sizes_id = s.id')
+        carts = []
+        for cart in cursor.fetchall():
+            cursor.execute(f'select id from wishlists where products_id={cart[0]} and users_id={get_jwt_identity()}')
+            wishlist = cursor.fetchone()
+            carts.append({
+                "id": cart[0],
+                "name": cart[1],
+                "image": cart[2],
+                "color": cart[3],
+                "size": cart[4],
+                "category": cart[5],
+                "price": cart[6],
+                "sale": cart[7],
+                "quantity": cart[8],
+                "wishlist": wishlist,
+                "sizes_id": cart[9]
+            })
+        cursor.close()   
+        response = jsonify(carts)
+        return response
 
-
-
-
-
-
-
-
+@app.route('/address', methods=['POST','DELETE','PUT','GET'])
+@jwt_required()
+def address():
+    if request.method == 'POST':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'insert into addresses(users_id,name,province,city,subdistrict,postcode,phone,address) values({get_jwt_identity()},"{request.form.get("name")}","{request.form.get("province")}","{request.form.get("city")}","{request.form.get("subdistrict")}","{request.form.get("postcode")}","{request.form.get("phone")}","{request.form.get("address")}")')
+        mysql.connection.commit()
+        cursor.close()   
+        response = jsonify("successfuly created")
+        return response, 201  
+    if request.method == 'PUT':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'update addresses set name="{request.form.get("name")}", province="{request.form.get("province")}", city="{request.form.get("city")}", subdistrict="{request.form.get("subdistrict")}", postcode="{request.form.get("postcode")}", phone="{request.form.get("phone")}",address="{request.form.get("address")}" where users_id={get_jwt_identity()}')
+        mysql.connection.commit()
+        cursor.close()
+        response = jsonify("successfuly deleted")
+        return response, 200
+    if request.method == 'DELETE':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'delete from addresses where id={request.form.get("id")}')
+        mysql.connection.commit()
+        cursor.close()   
+        response = jsonify("successfuly deleted")
+        return response, 200
+    if request.method == 'GET':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'select id,name,province,city,subdistrict,postcode,phone,address from addresses where users_id={get_jwt_identity()}')
+        addresses = []
+        address = cursor.fetchone()
+        if address is None:
+            return jsonify("There is no address"),400
+        addresses= {
+            "id": address[0],
+            "name": address[1],
+            "province": address[2],
+            "city": address[3],
+            "subdistrict": address[4],
+            "postcode": address[5],
+            "phone": address[6],
+            "address": address[7],
+        }
+        cursor.close()   
+        response = jsonify(addresses)
+        return response
 
 @app.route('/wishlist', methods=['POST','DELETE'])
 @jwt_required()
@@ -595,16 +679,59 @@ def wishlist():
         response = jsonify("successfuly deleted")
         return response, 200
     
-@app.route('/wishlist_check', methods=['GET'])
+@app.route('/order', methods=['POST','PUT','DELETE','GET'])
 @jwt_required()
-def wishlist_check():
-    cursor = mysql.connection.cursor()
-    cursor.execute(f'select * from wishlists where products_id={request.form.get("products_id")} and users_id={get_jwt_identity()})')
-    mysql.connection.commit()
-    cursor.close()   
-    response = jsonify("successfuly created")
-    return response, 201
-    
+def order():
+    if request.method == 'POST':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'insert into orders(users_id,status) values({get_jwt_identity()},"0")')
+        orders_id = cursor.lastrowid
+        for product in request.json.get('products'):
+            cursor.execute(f'insert into products_orders(orders_id,products_id,quantity) values({orders_id},{product["products_id"]},{product["quantity"]})')
+            cursor.execute(f'update products_sizes set stocks = stocks-{product["quantity"]} where sizes_id={product["sizes_id"]} and products_id={product["products_id"]}')
+        cursor.execute(f'delete from carts where users_id={get_jwt_identity()}')
+        mysql.connection.commit()
+        cursor.close()   
+        response = jsonify("successfuly created")
+        return response, 201  
+    if request.method == 'PUT':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'update addresses set name="{request.form.get("name")}", province="{request.form.get("province")}", city="{request.form.get("city")}", subdistrict="{request.form.get("subdistrict")}", postcode="{request.form.get("postcode")}", phone="{request.form.get("phone")}",address="{request.form.get("address")}" where users_id={get_jwt_identity()}')
+        mysql.connection.commit()
+        cursor.close()
+        response = jsonify("successfuly deleted")
+        return response, 200
+    if request.method == 'DELETE':
+        cursor = mysql.connection.cursor()
+        cursor.execute(f'delete from products_orders where id={request.form.get("id")}')
+        mysql.connection.commit()
+        cursor.close()   
+        response = jsonify("successfuly deleted")
+        return response, 200
+    if request.method == 'GET':
+        cursor = mysql.connection.cursor()
+        # cursor.execute(f'select * from orders where users_id={get_jwt_identity()}')
+        
+        cursor.execute(f'select o.id, o.created_at, p.image, p.sku, p.price, p.sale, b.name, po.quantity from orders o, products_orders po, products p, brands b where b.id = p.brands_id and o.users_id={get_jwt_identity()} and po.products_id = p.id')
+        orders = cursor.fetchall()
+        cursor.close()
+        if orders is None:
+            return jsonify("There is no orders"),400
+        products = []
+        for product in orders:    
+            products.append({
+                    "order_id": product[0],
+                    "date": product[1],
+                    "image": product[2],
+                    "sku": product[3],
+                    "price": product[4],
+                    "sale": product[5],
+                    "brand": product[6],
+                    "quantity": product[7],
+                })
+        
+        response = jsonify(products)
+        return response
     
     
     
@@ -704,9 +831,11 @@ def migration():
         id int primary key auto_increment,
         products_id int not null,
         users_id int not null,
+        sizes_id int not null,
         quantity int not null,
         foreign key(products_id) references products(id),
-        foreign key(users_id) references users(id))
+        foreign key(users_id) references users(id),
+        foreign key(sizes_id) references sizes(id))
         ''')
     
     #orders table

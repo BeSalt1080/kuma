@@ -3,8 +3,9 @@ import { RouterLink } from 'vue-router';
 import SearchBar from './SearchBar.vue';
 import DropdownLink from './DropdownLink.vue';
 import Profile from './Profile.vue';
-import Cart from './Cart.vue';
-import Wishlist from './Wishlist.vue';
+import WishlistIcon from './icons/WishlistIcon.vue';
+import CartIcon from './icons/CartIcon.vue';
+
 
 </script>
 
@@ -13,7 +14,7 @@ import Wishlist from './Wishlist.vue';
         <div class="flex justify-between w-4/12 items-center">
             <RouterLink to="/" class="select-none font-bold text-2xl">Kuma</RouterLink>
             <div class="flex gap-4 uppercase font-bold">
-                <div>latest</div>
+                <RouterLink :to="{name:'latest'}">latest</RouterLink>
                 <DropdownLink title="Men">
                     <RouterLink class="px-5 py-2 hover:bg-green-400" to="/men/new-arrival">New
                         Arrival</RouterLink>
@@ -42,8 +43,12 @@ import Wishlist from './Wishlist.vue';
         </div>
         <div class="flex gap-4">
             <SearchBar></SearchBar>
-            <Wishlist></Wishlist>
-            <Cart></Cart>
+            <RouterLink :to="{name:'wishlist'}">
+                <WishlistIcon height="24px" />
+            </RouterLink>
+            <RouterLink :to="{name:'cart'}">
+                <CartIcon height="24px" />
+            </RouterLink>
             <Profile></Profile>
         </div>
     </nav>
