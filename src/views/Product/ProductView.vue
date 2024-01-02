@@ -2,10 +2,10 @@
 import { authService } from '../../api';
 import ToggleList from '@/components/ToggleList.vue';
 import Product from '../../components/Product.vue'
-import { ref,defineProps, toRefs, watch, onMounted } from 'vue';
+import { ref,defineProps, toRefs, watch, onMounted, onUpdated } from 'vue';
 import { useRouter } from 'vue-router';
 
-const route = useRouter().currentRoute.value
+const router = useRouter().currentRoute.value
 
 
 const products = ref([])
@@ -28,7 +28,6 @@ const props = defineProps({
 const {category} = toRefs(props)
 
 const fetchProduct = async () => {
-    console.log(route)
     try {
         const response = await authService.get('/product_get');
         products.value = response.data;
@@ -37,38 +36,35 @@ const fetchProduct = async () => {
             case 'Men':
                 gender.value = true                
                 products.value = products.value.filter((product) => { return product.gender == "Men" || product.gender == "Unisex"})
-                if (route.params.categories == "footwear") {
-
+                if (router.params.categories == "footwear") {
+                    products.value = products.value.filter((product) => { return product.category == "Footwear" })
                 }
-                else if (route.params.categories == "aparrel") {
-
+                else if (router.params.categories == "aparrel") {
+                    products.value = products.value.filter((product) => { return product.category == "Aparrel" })
                 }
                 break;
             case 'Women':
                 gender.value = true
                 products.value = products.value.filter((product) => { return product.gender == "Women" || product.gender == "Unisex" })
-                if (route.params.categories == "footwear") {
-
+                if (router.params.categories == "footwear") {
+                    products.value = products.value.filter((product) => { return product.category == "Footwear" })
                 }
-                else if (route.params.categories == "aparrel") {
-
+                else if (router.params.categories == "aparrel") {
+                    products.value = products.value.filter((product) => { return product.category == "Aparrel" })
                 }
                 break;
             case 'Kids':
                 gender.value = true   
                 products.value = products.value.filter((product) => { return product.gender == "Kids" })
-                if (route.params.categories == "footwear") {
-
+                if (router.params.categories == "footwear") {
+                    products.value = products.value.filter((product) => { return product.category == "Footwear" })
                 }
-                else if (route.params.categories == "aparrel") {
-
+                else if (router.params.categories == "aparrel") {
+                    products.value = products.value.filter((product) => { return product.category == "Aparrel" })
                 }
-                break;
-            case 'Latest':
-
                 break;
             case 'Sale':
-                console.log("");
+                products.value = products.value.filter((product) => { return product.sale > 0 })
                 break;
             case 'Accessory':
 
@@ -76,11 +72,7 @@ const fetchProduct = async () => {
             case 'Brand':
 
                 break;
-
-            default:
-                break;
         }
-        console.log(gender.value);
     } catch (error) {
         console.error('Error fetching data:', error);
     }
@@ -178,11 +170,13 @@ const countData = () => {
     });
 }
 onMounted(()=>{
-    fetchData();
-    watch(props, () => {
-        fetchData();
-    });
+    fetchData()
 })
+
+watch(category, ()=>{
+    fetchProduct()
+})
+
 
 
 </script>
@@ -192,7 +186,7 @@ onMounted(()=>{
         <div class="flex gap-5">
             <div class="w-1/6">
                 <div class="border-b-black border-b">
-                    Home / {{ category }} / {{ $route.params.categories }}
+                    Home / {{ category }} / {{ router.params.categories }}
                 </div>
                 <hr>
                 <ToggleList title="Brand">

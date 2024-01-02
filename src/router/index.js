@@ -134,6 +134,7 @@ const router = createRouter({
       path: "/cart",
       name: "cart",
       component: CartView,
+      meta: { requiresAuth: true}
     },
     {
       path: "/order",
@@ -198,6 +199,7 @@ const router = createRouter({
           path: "shipping",
           name: "shipping",
           component: () => import("../views/Admin/Shipping/Index.vue"),
+          
         },
         {
           path: "shipping/create",

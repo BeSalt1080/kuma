@@ -92,7 +92,6 @@ def login():
                 response = jsonify({'name':user[1],'email':user[2]})
                 set_access_cookies(response, access_token)
                 set_refresh_cookies(response, refresh_token)
-                response.headers["Access-Control-Allow-Credentials"] = "true"
                 return response, 200;
         else:
             v.errors['email'] = 'incorrect email address or password'
@@ -530,7 +529,7 @@ def product_select():
         cursor.execute(f'select p.* ,b.name as brand, c.name as category, g.name as gender from products p, brands b, categories c, genders g where b.id = p.brands_id and c.id = p.categories_id and g.id = p.genders_id and p.id={request.args.get("id")} order by p.id desc')
     products = []
     fetch = cursor.fetchall()
-        
+    
     for product in fetch:
         tempSize = []
         wishlist = []
