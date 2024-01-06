@@ -36,7 +36,7 @@ CREATE TABLE `addresses` (
   UNIQUE KEY `name` (`name`),
   KEY `users_id` (`users_id`),
   CONSTRAINT `addresses_ibfk_1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,6 +45,8 @@ CREATE TABLE `addresses` (
 
 LOCK TABLES `addresses` WRITE;
 /*!40000 ALTER TABLE `addresses` DISABLE KEYS */;
+INSERT INTO `addresses` VALUES
+(1,1,'Shinichi Wijaya','DKI Jakarta','Jakarta Barat','Cengkareng','11730','087804035353','asodijfadj ioasjd foiajsf ioaj');
 /*!40000 ALTER TABLE `addresses` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -83,7 +85,7 @@ CREATE TABLE `brands` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +99,8 @@ INSERT INTO `brands` VALUES
 (2,'Nike'),
 (3,'Puma'),
 (4,'Vans'),
-(5,'Asics');
+(5,'Asics'),
+(6,'udang');
 /*!40000 ALTER TABLE `brands` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -113,12 +116,13 @@ CREATE TABLE `carts` (
   `products_id` int(11) NOT NULL,
   `users_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
+  `sizes_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `products_id` (`products_id`),
   KEY `users_id` (`users_id`),
   CONSTRAINT `carts_ibfk_1` FOREIGN KEY (`products_id`) REFERENCES `products` (`id`),
   CONSTRAINT `carts_ibfk_2` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,6 +131,9 @@ CREATE TABLE `carts` (
 
 LOCK TABLES `carts` WRITE;
 /*!40000 ALTER TABLE `carts` DISABLE KEYS */;
+INSERT INTO `carts` VALUES
+(14,23,1,1,13),
+(16,8,2,1,10);
 /*!40000 ALTER TABLE `carts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,10 +204,11 @@ CREATE TABLE `orders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `users_id` int(11) NOT NULL,
   `status` char(1) NOT NULL,
+  `created_at` date DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `users_id` (`users_id`),
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -209,6 +217,13 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+INSERT INTO `orders` VALUES
+(3,1,'0','2024-01-02'),
+(4,1,'0','2024-01-03'),
+(5,1,'0','2024-01-03'),
+(6,1,'0','2024-01-03'),
+(9,1,'0','2024-01-03'),
+(10,1,'0','2024-01-04');
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -224,7 +239,7 @@ CREATE TABLE `payments` (
   `name` text NOT NULL,
   `image` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -316,12 +331,13 @@ CREATE TABLE `products_orders` (
   `orders_id` int(11) NOT NULL,
   `products_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
+  `sizes_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `orders_id` (`orders_id`),
   KEY `products_id` (`products_id`),
   CONSTRAINT `products_orders_ibfk_1` FOREIGN KEY (`orders_id`) REFERENCES `orders` (`id`),
   CONSTRAINT `products_orders_ibfk_2` FOREIGN KEY (`products_id`) REFERENCES `products` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -330,6 +346,16 @@ CREATE TABLE `products_orders` (
 
 LOCK TABLES `products_orders` WRITE;
 /*!40000 ALTER TABLE `products_orders` DISABLE KEYS */;
+INSERT INTO `products_orders` VALUES
+(2,3,2,3,8),
+(3,3,1,1,9),
+(4,3,4,1,10),
+(5,4,5,1,11),
+(6,5,5,1,12),
+(7,6,5,1,13),
+(8,9,17,11,14),
+(9,10,3,3,10),
+(10,10,23,5,13);
 /*!40000 ALTER TABLE `products_orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -360,19 +386,19 @@ CREATE TABLE `products_sizes` (
 LOCK TABLES `products_sizes` WRITE;
 /*!40000 ALTER TABLE `products_sizes` DISABLE KEYS */;
 INSERT INTO `products_sizes` VALUES
-(1,1,12,5),
+(1,1,12,4),
 (2,1,13,10),
 (3,1,15,3),
-(4,2,11,22),
+(4,2,11,19),
 (5,2,10,60),
 (6,2,13,46),
-(7,3,10,27),
+(7,3,10,24),
 (8,3,15,77),
 (9,3,7,19),
-(10,4,15,83),
+(10,4,15,82),
 (11,4,9,56),
 (12,4,16,11),
-(13,5,14,93),
+(13,5,14,90),
 (14,5,16,67),
 (15,5,11,35),
 (16,6,18,47),
@@ -408,7 +434,7 @@ INSERT INTO `products_sizes` VALUES
 (46,16,10,17),
 (47,16,18,75),
 (48,16,15,53),
-(49,17,20,55),
+(49,17,20,44),
 (50,17,19,33),
 (51,17,18,59),
 (52,18,11,13),
@@ -426,9 +452,9 @@ INSERT INTO `products_sizes` VALUES
 (64,22,16,16),
 (65,22,19,25),
 (66,22,11,40),
-(67,23,13,98),
+(67,23,13,93),
 (68,23,20,61),
-(69,23,15,43);
+(69,23,15,42);
 /*!40000 ALTER TABLE `products_sizes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -444,7 +470,7 @@ CREATE TABLE `shippings` (
   `name` text NOT NULL,
   `cost` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -453,6 +479,12 @@ CREATE TABLE `shippings` (
 
 LOCK TABLES `shippings` WRITE;
 /*!40000 ALTER TABLE `shippings` DISABLE KEYS */;
+INSERT INTO `shippings` VALUES
+(1,'JNE',15000),
+(2,'SiCepat',10000),
+(3,'J&T',12000),
+(4,'Wahana',17000),
+(5,'AnterAja',13000);
 /*!40000 ALTER TABLE `shippings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -515,7 +547,7 @@ CREATE TABLE `users` (
   `roles` char(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -525,7 +557,8 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES
-(1,'admin','admin@gmail.com','$2b$12$7gPXEv7lfIicp.brjv53l.769kD8/xr.f0xioBq2sIdsE963XaMfC','1');
+(1,'admin','admin@gmail.com','$2b$12$aFtxN9rmXYYGUoh63hutYO5Z/43wSJ2GUeTca6R4jFMVb72Qys.Ri','1'),
+(2,'William','william@gmail.com','$2b$12$SlxFVTtobXnTGoR0DduAbumIS.KQ74ulGZy7oXGDenME6vCCgK10O','0');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -545,7 +578,7 @@ CREATE TABLE `wishlists` (
   KEY `users_id` (`users_id`),
   CONSTRAINT `wishlists_ibfk_1` FOREIGN KEY (`products_id`) REFERENCES `products` (`id`),
   CONSTRAINT `wishlists_ibfk_2` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -554,6 +587,11 @@ CREATE TABLE `wishlists` (
 
 LOCK TABLES `wishlists` WRITE;
 /*!40000 ALTER TABLE `wishlists` DISABLE KEYS */;
+INSERT INTO `wishlists` VALUES
+(13,5,1),
+(21,13,1),
+(23,3,1),
+(24,23,1);
 /*!40000 ALTER TABLE `wishlists` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -566,4 +604,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-31 19:22:05
+-- Dump completed on 2024-01-06 13:17:39
