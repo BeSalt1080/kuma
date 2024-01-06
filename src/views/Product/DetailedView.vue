@@ -1,9 +1,14 @@
 <script setup>
 import { authService } from '@/api';
 import { ref, onMounted } from 'vue';
-import router from '../../router'
 
-const route = router.currentRoute
+import { useAuthStore } from '@/stores/auth';
+import { useRoute, useRouter } from 'vue-router';
+
+const router = useRouter()
+const route = useRoute()
+
+const msg = ref('')
 
 const product = ref('')
 const selectedSize = ref('')
@@ -14,7 +19,7 @@ const fetchData = async () => {
     try {
         const response = await authService.get('/product_get',
             {
-                params: { id: route.value.params.id },
+                params: { id: route.params.id },
                 header: { "Content-Type": "application/x-www-form-urlencoded" }
             });
         product.value = response.data[0];
@@ -29,8 +34,10 @@ const fetchData = async () => {
 const selectSize = (sizes) => {
     selectedSize.value = sizes
 }
+const store = useAuthStore()
 const wishlist = async () => {
-    if (product.value.wishlist) {
+    if (Object.keys(store.user).length == 0) router.push({ name: 'login' });
+    if (product.value.wishlist.length > 0) {
         try {
             await authService.delete('/wishlist', {
                 data: { id: product.value.wishlist[0] },
@@ -55,6 +62,7 @@ const wishlist = async () => {
 }
 
 const addToCart = async () => {
+    if (Object.keys(store.user).length == 0) router.push({ name: 'login' });
     const data = {
         products_id: product.value.id,
         quantity: quantity.value,
@@ -63,6 +71,11 @@ const addToCart = async () => {
     await authService.post('/cart', data, {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    }).then(response => {
+        if (response.status == 201) {
+            msg.value = "Items added to your cart successfully"
+            setTimeout(()=>{msg.value=''},3000)
         }
     });
     fetchData()
@@ -75,6 +88,7 @@ onMounted(() => {
 <template>
     <div class="flex flex-1 justify-center mt-14">
         <div class="w-2/3">
+            <p class="bg-green-400 text-white font-bold p-5" v-if="msg">{{ msg }}</p>
             <span>Home / {{ product.gender }} / {{ product.category }}</span>
             <div class="flex">
                 <img :src="'/uploaded/' + product.image" :alt="product.image" />
@@ -89,8 +103,16 @@ onMounted(() => {
                         Stocks:
                         {{ sizeArray.filter(size => { return size.id == selectedSize })[0].quantity }}
                     </div>
-                    <div class="font-semibold text-xl">
+                    <div class="text-xl font-semibold" v-if="product.sale == 0">
                         {{ new Intl.NumberFormat('in-ID', { style: 'currency', currency: 'IDR' }).format(product.price) }}
+                    </div>
+                    <div class="text-xl font-semibold" v-else>
+                        {{ new Intl.NumberFormat('in-ID', { style: 'currency', currency: 'IDR' }).format(product.price *
+                            (product.sale / 100))
+                        }}
+                        <sup class="line-through text-sm">{{ new Intl.NumberFormat('in-ID', {
+                            style: 'currency', currency: 'IDR'
+                        }).format(product.price) }}</sup>
                     </div>
                     <div class="my-5">
                         Size:
@@ -111,9 +133,9 @@ onMounted(() => {
                         <button class="p-4 bg-green-400 hover:bg-green-300 rounded-lg" @click="addToCart">
                             <i class="fas fa-shopping-cart"></i> Add to Cart
                         </button>
-                        <button class="border rounded-full w-14 h-14" @click="wishlist">
+                        <button class="border rounded-full w-14 h-14" @click="wishlist" v-if="product.wishlist">
                             <i class="fa-regular fa-heart text-2xl mt-1"
-                                :class="{ 'text-red-600 fa-solid': product.wishlist }"></i>
+                                :class="{ 'text-red-600 fa-solid': product.wishlist.length }"></i>
                         </button>
                     </div>
                 </div>

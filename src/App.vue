@@ -1,20 +1,20 @@
 <script setup>
-import { RouterView } from 'vue-router'
+import { RouterView, useRoute } from 'vue-router'
 import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
-import router from './router';
 
-console.log(router)
-const currentpath = router.currentRoute 
+const route = useRoute()
+
+console.log(route.fullPath)
 
 </script>
 
 <template class="overflow-x-clip min-h-dvh">
-  <header v-if="!currentpath.fullPath.startsWith('/dashboard')">
+  <header v-if="!route.fullPath.startsWith('/dashboard')">
     <Navbar />
   </header>
-  <main class="h-full w-vw overflow-x-clip min-h-dvh">
-    <RouterView class="h-full w-full"/>
+  <main class="min-h-[calc(100vh-64px)] w-vw overflow-x-clip ">
+    <RouterView />
   </main>
   <footer>
     <Footer />

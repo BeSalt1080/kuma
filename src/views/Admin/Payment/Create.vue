@@ -63,9 +63,12 @@ const submitForm = async (e) => {
                 'Content-Type': 'multipart/form-data',
             },
         });
-        successMessage.value = 'Form submitted successfully!';
-        e.target.reset()
-        errorMessage.value = '';
+        if(response.status==200)
+        {
+            successMessage.value = 'Form submitted successfully!';
+            e.target.reset()
+            errorMessage.value = '';
+        }
     } catch (error) {
         successMessage.value = '';
         errorMessage.value = `Error: ${error.message || 'Unknown error'}`;

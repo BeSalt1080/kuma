@@ -11,8 +11,8 @@ import CartIcon from './icons/CartIcon.vue';
 
 <template>
     <nav class="flex justify-between px-8 py-2 h-16 bg-white border-b items-center">
-        <div class="flex justify-between w-4/12 items-center">
-            <RouterLink to="/" class="select-none font-bold text-2xl">Kuma</RouterLink>
+        <div class="flex justify-between w-4/12 items-center select-none ">
+            <RouterLink to="/" class="font-bold text-2xl">Kuma</RouterLink>
             <div class="flex gap-4 uppercase font-bold">
                 <RouterLink :to="{name:'latest'}">latest</RouterLink>
                 <DropdownLink title="Men">
@@ -38,7 +38,7 @@ import CartIcon from './icons/CartIcon.vue';
                     </RouterLink>
                 </DropdownLink>
                 <RouterLink to="/accessory">Accessories</RouterLink>
-                <RouterLink to="/sale">Sale</RouterLink>
+                <RouterLink class="text-green-500" to="/sale">Sale</RouterLink>
             </div>
         </div>
         <div class="flex gap-4">

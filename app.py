@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, make_response
-from flask_jwt_extended import get_jwt,create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies, unset_jwt_cookies, jwt_required, JWTManager, get_jwt_identity
+from flask_jwt_extended import get_jwt,create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies, unset_jwt_cookies, jwt_required, JWTManager, get_jwt_identity, verify_jwt_in_request
 from cerberus import Validator 
 import bcrypt
 from flask_cors import CORS
@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_PASSWORD'] = '1080'
 app.config['MYSQL_DB'] = 'kuma'
 app.config['JWT_SECRET_KEY'] = '56b80543728020a3cd8d0ac0344b4b6d51c5af91ce8ee0d215983d0550a057be'
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
@@ -83,9 +83,6 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
         
-        # print(email)
-        # print(password)
-        
         if email == "" or password == "":
             v.errors['email'] = 'email or password cannot be empty'
             response = make_response(
@@ -125,22 +122,14 @@ def check():
         response = jsonify({'name':user[1],'email':user[2],'role':user[4]})
         return response, 200  
         
-
-@app.after_request
-def refresh(response):
-    try:
-        exp_timestamp = get_jwt()["exp"]
-        return response
-        now = datetime.now(timezone.utc)
-        target_timestamp = datetime.timestamp(now + timedelta(hours=1))
-        if target_timestamp > exp_timestamp:
-            print("New Token!")
-            access_token = create_access_token(identity=get_jwt_identity())
-            set_access_cookies(response, access_token)
-        return response
-    except (RuntimeError, KeyError):
-        print("No Token :(")
-        return response
+@app.route('/refresh', methods=['POST'])
+@jwt_required(refresh=True)
+def refresh_token():
+    current_user = get_jwt_identity()
+    new_token = create_access_token(identity=current_user)
+    response = jsonify({'refreshed': True})
+    set_access_cookies(response, new_token)
+    return response, 200
 
 @app.route('/logout', methods=['POST'])
 @jwt_required()
@@ -202,21 +191,21 @@ def payment():
                 cursor.execute(f'insert into payments(name,image) values("{request.form.get("name")}","{imagename}")')
                 mysql.connection.commit()
                 cursor.close()   
-                response = jsonify("successfuly created")
+                response = jsonify("Successfully created data")
                 return response, 201  
     if request.method == 'PUT':
         cursor = mysql.connection.cursor()
         cursor.execute(f'UPDATE payments set name="{request.form.get("name")}", image="{request.form.get("image")}" where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly updated")
+        response = jsonify("Successfully updated data")
         return response, 200
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
         cursor.execute(f'delete from payments where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
 
 @app.route('/payment_get', methods=['GET'])
@@ -245,21 +234,21 @@ def category():
         cursor.execute(f'insert into categories(name) values("{request.form.get("name")}")')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly created")
+        response = jsonify("Successfully created data")
         return response, 201  
     if request.method == 'PUT':
         cursor = mysql.connection.cursor()
         cursor.execute(f'UPDATE categories set name="{request.form.get("name")}" where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly updated")
+        response = jsonify("Successfully updated data")
         return response, 200
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
         cursor.execute(f'delete from categories where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
     
 @app.route('/category_get', methods=['GET'])
@@ -293,14 +282,14 @@ def banner():
                 cursor.execute(f'insert into banners(banner,links) values("{imagename}","{request.form.get("link")}")')
                 mysql.connection.commit()
                 cursor.close()   
-                response = jsonify("successfuly created")
+                response = jsonify("Successfully created data")
                 return response, 201  
     if request.method == 'PUT':
         cursor = mysql.connection.cursor()
         cursor.execute(f'UPDATE banners set banner="{request.form.get("banner")}", link="{request.form.get("link")}" where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly updated")
+        response = jsonify("Successfully updated data")
         return response, 200
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
@@ -310,7 +299,7 @@ def banner():
         cursor.execute(f'delete from banners where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
 
 @app.route('/banner_get', methods=['GET'])
@@ -339,21 +328,21 @@ def size():
         cursor.execute(f'insert into sizes(name) values("{request.form.get("name")}")')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly created")
+        response = jsonify("Successfully created data")
         return response, 201  
     if request.method == 'PUT':
         cursor = mysql.connection.cursor()
         cursor.execute(f'UPDATE sizes set name="{request.form.get("name")}" where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly updated")
+        response = jsonify("Successfully updated data")
         return response, 200
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
         cursor.execute(f'delete from sizes where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
 
 @app.route('/size_get', methods=['GET'])
@@ -381,21 +370,21 @@ def gender():
         cursor.execute(f'insert into genders(name) values("{request.form.get("name")}")')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly created")
+        response = jsonify("Successfully created data")
         return response, 201  
     if request.method == 'PUT':
         cursor = mysql.connection.cursor()
         cursor.execute(f'UPDATE genders set name="{request.form.get("name")}" where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly updated")
+        response = jsonify("Successfully updated data")
         return response, 200
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
         cursor.execute(f'delete from genders where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
 
 @app.route('/gender_get', methods=['GET'])
@@ -424,21 +413,21 @@ def brand():
         cursor.execute(f'insert into brands(name) values("{request.form.get("name")}")')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly created")
+        response = jsonify("Successfully created data")
         return response, 201  
     if request.method == 'PUT':
         cursor = mysql.connection.cursor()
         cursor.execute(f'UPDATE brands set name="{request.form.get("name")}" where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly updated")
+        response = jsonify("Successfully updated data")
         return response, 200
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
         cursor.execute(f'delete from brands where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
     
 @app.route('/brand_get', methods=['GET'])
@@ -465,21 +454,21 @@ def shipping():
         cursor.execute(f'insert into shippings(name,cost) values("{request.form.get("name")}",{request.form.get("cost")})')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly created")
+        response = jsonify("Successfully created data")
         return response, 201  
     if request.method == 'PUT':
         cursor = mysql.connection.cursor()
         cursor.execute(f'UPDATE shippings set name="{request.form.get("name")}", cost={request.form.get("cost")} where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly updated")
+        response = jsonify("Successfully updated data")
         return response, 200
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
         cursor.execute(f'delete from shippings where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
     
 @app.route('/shipping_get', methods=['GET'])
@@ -513,26 +502,27 @@ def product():
                 cursor.execute(f'insert into products(name, description, image, sku, color, price, sale, categories_id, brands_id, genders_id) values("{request.form.get("name")}","{request.form.get("description")}","{imagename}","{request.form.get("sku")}","{request.form.get("color")}",{request.form.get("price")},{request.form.get("sale")},"{request.form.get("categories_id")}","{request.form.get("brands_id")}","{request.form.get("genders_id")}")')
                 mysql.connection.commit()
                 cursor.close()   
-                response = jsonify("successfuly created")
+                response = jsonify("Successfully created data")
                 return response, 201
     if request.method == 'PUT':
         cursor = mysql.connection.cursor()
         cursor.execute(f'UPDATE products set name="{request.form.get("name")}", description="{request.form.get("description")}", image="{request.form.get("image")}", sku="{request.form.get("sku")}", color="{request.form.get("color")}", stocks="{request.form.get("stocks")}", price={request.form.get("price")}, sale={request.form.get("sale")},categories_id="{request.form.get("categories_id")}",brands_id="{request.form.get("brands_id")}", sizes_id="{request.form.get("sizes_id")}", genders_id="{request.form.get("genders_id")}" where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly updated")
+        response = jsonify("Successfully updated data")
         return response, 200
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
         cursor.execute(f'delete from products where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
     
 
+
 @app.route('/product_get', methods=['GET'])
-@jwt_required(optional=True)
+@jwt_required( optional=True )
 def product_select():
     cursor = mysql.connection.cursor()
     if request.args.get('id') is None:
@@ -541,13 +531,14 @@ def product_select():
         cursor.execute(f'select p.* ,b.name as brand, c.name as category, g.name as gender from products p, brands b, categories c, genders g where b.id = p.brands_id and c.id = p.categories_id and g.id = p.genders_id and p.id={request.args.get("id")} order by p.id desc')
     products = []
     fetch = cursor.fetchall()
-    
     for product in fetch:
         tempSize = []
         wishlist = []
         if get_jwt_identity() is not None:
             cursor.execute(f'select id from wishlists where products_id={product[0]} and users_id={get_jwt_identity()}')
             wishlist = cursor.fetchone()
+            if wishlist is None:
+                wishlist = []
         cursor.execute(f'select s.id, s.name, ps.stocks, ps.id from products_sizes ps, sizes s, products p where p.id=ps.products_id and ps.sizes_id=s.id and p.id={product[0]}')
         for size in cursor.fetchall():
             tempSize.append({
@@ -584,28 +575,34 @@ def product_select():
 def cart():
     if request.method == 'POST':
         cursor = mysql.connection.cursor()
-        cursor.execute(f'insert into carts(products_id,users_id,quantity,sizes_id) values({request.form.get("products_id")},{get_jwt_identity()},{request.form.get("quantity")},{request.form.get("sizes_id")})')
+        cursor.execute(f'select id from carts where products_id={request.form.get("products_id")} and users_id={get_jwt_identity()} and sizes_id={request.form.get("sizes_id")}')
+        cart = cursor.fetchone()
+        if cart is None:
+            cursor.execute(f'insert into carts(products_id,users_id,quantity,sizes_id) values({request.form.get("products_id")},{get_jwt_identity()},{request.form.get("quantity")},{request.form.get("sizes_id")})')
+        else:
+            cursor.execute(f'update carts set quantity=quantity+{request.form.get("quantity")} where id = {cart[0]} ')
+        
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly created")
+        response = jsonify("Successfully created data")
         return response, 201  
     if request.method == 'PUT':
         cursor = mysql.connection.cursor()
         cursor.execute(f'update carts set quantity={request.form.get("quantity")} where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully updated data")
         return response, 200
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
         cursor.execute(f'delete from carts where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
     if request.method == 'GET':
         cursor = mysql.connection.cursor()
-        cursor.execute(f'select p.id, p.name, p.image, p.color, s.name, cat.name, p.price, p.sale, c.quantity, s.id from carts c, sizes s, products p, categories cat where users_id={get_jwt_identity()} and c.products_id = p.id and p.categories_id = cat.id and c.sizes_id = s.id')
+        cursor.execute(f'select p.id, p.name, p.image, p.color, s.name, cat.name, p.price, p.sale, c.quantity, s.id, c.id, p.brands_id from carts c, sizes s, products p, categories cat where users_id={get_jwt_identity()} and c.products_id = p.id and p.categories_id = cat.id and c.sizes_id = s.id')
         carts = []
         for cart in cursor.fetchall():
             cursor.execute(f'select id from wishlists where products_id={cart[0]} and users_id={get_jwt_identity()}')
@@ -621,7 +618,9 @@ def cart():
                 "sale": cart[7],
                 "quantity": cart[8],
                 "wishlist": wishlist,
-                "sizes_id": cart[9]
+                "sizes_id": cart[9],
+                "cart_id": cart[10],
+                "brands_id": cart[11]
             })
         cursor.close()   
         response = jsonify(carts)
@@ -635,21 +634,21 @@ def address():
         cursor.execute(f'insert into addresses(users_id,name,province,city,subdistrict,postcode,phone,address) values({get_jwt_identity()},"{request.form.get("name")}","{request.form.get("province")}","{request.form.get("city")}","{request.form.get("subdistrict")}","{request.form.get("postcode")}","{request.form.get("phone")}","{request.form.get("address")}")')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly created")
+        response = jsonify("Successfully created address")
         return response, 201  
     if request.method == 'PUT':
         cursor = mysql.connection.cursor()
         cursor.execute(f'update addresses set name="{request.form.get("name")}", province="{request.form.get("province")}", city="{request.form.get("city")}", subdistrict="{request.form.get("subdistrict")}", postcode="{request.form.get("postcode")}", phone="{request.form.get("phone")}",address="{request.form.get("address")}" where users_id={get_jwt_identity()}')
         mysql.connection.commit()
         cursor.close()
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully updated address")
         return response, 200
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
         cursor.execute(f'delete from addresses where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted address")
         return response, 200
     if request.method == 'GET':
         cursor = mysql.connection.cursor()
@@ -680,14 +679,14 @@ def wishlist():
         cursor.execute(f'insert into wishlists(products_id,users_id) values({request.form.get("products_id")},{get_jwt_identity()})')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly created")
+        response = jsonify("Successfully created data")
         return response, 201  
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
         cursor.execute(f'delete from wishlists where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
     
 @app.route('/order', methods=['POST','PUT','DELETE','GET'])
@@ -698,32 +697,30 @@ def order():
         cursor.execute(f'insert into orders(users_id,status) values({get_jwt_identity()},"0")')
         orders_id = cursor.lastrowid
         for product in request.json.get('products'):
-            cursor.execute(f'insert into products_orders(orders_id,products_id,quantity) values({orders_id},{product["products_id"]},{product["quantity"]})')
+            cursor.execute(f'insert into products_orders(orders_id,products_id,quantity,sizes_id) values({orders_id},{product["products_id"]},{product["quantity"]},{product["sizes_id"]})')
             cursor.execute(f'update products_sizes set stocks = stocks-{product["quantity"]} where sizes_id={product["sizes_id"]} and products_id={product["products_id"]}')
         cursor.execute(f'delete from carts where users_id={get_jwt_identity()}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly created")
+        response = jsonify("Successfully created data")
         return response, 201  
     if request.method == 'PUT':
         cursor = mysql.connection.cursor()
         cursor.execute(f'update addresses set name="{request.form.get("name")}", province="{request.form.get("province")}", city="{request.form.get("city")}", subdistrict="{request.form.get("subdistrict")}", postcode="{request.form.get("postcode")}", phone="{request.form.get("phone")}",address="{request.form.get("address")}" where users_id={get_jwt_identity()}')
         mysql.connection.commit()
         cursor.close()
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
     if request.method == 'DELETE':
         cursor = mysql.connection.cursor()
         cursor.execute(f'delete from products_orders where id={request.form.get("id")}')
         mysql.connection.commit()
         cursor.close()   
-        response = jsonify("successfuly deleted")
+        response = jsonify("Successfully deleted data")
         return response, 200
     if request.method == 'GET':
         cursor = mysql.connection.cursor()
-        # cursor.execute(f'select * from orders where users_id={get_jwt_identity()}')
-        
-        cursor.execute(f'select o.id, o.created_at, p.image, p.sku, p.price, p.sale, b.name, po.quantity from orders o, products_orders po, products p, brands b where b.id = p.brands_id and o.users_id={get_jwt_identity()} and po.products_id = p.id')
+        cursor.execute(f'select o.id, o.created_at, p.image, p.sku, p.price, p.sale, b.name, po.quantity, o.status, p.name, s.name as size from orders o,  products_orders po, products p, brands b, sizes s where b.id = p.brands_id and o.users_id={get_jwt_identity()} and po.products_id = p.id and po.orders_id = o.id and po.sizes_id= s.id')
         orders = cursor.fetchall()
         cursor.close()
         if orders is None:
@@ -739,14 +736,51 @@ def order():
                     "sale": product[5],
                     "brand": product[6],
                     "quantity": product[7],
+                    "status": product[8],
+                    "name": product[9],
+                    "size": product[10]
                 })
         
         response = jsonify(products)
         return response
     
+@app.route('/user', methods=['PUT','DELETE','GET'])
+@jwt_required()
+def user():
+    cursor = mysql.connection.cursor()
+    user_id = get_jwt_identity()
+    name = request.form.get('name')
+    password = request.form.get('password')
+    changeEmail = request.form.get('changeEmail')
+    email = request.form.get('email')
+    changePassword = request.form.get('changePassword')
+    newPassword = request.form.get('newPassword')
+    
+    cursor.execute(f'select password from users where id = {user_id}')
+    currentPassword = cursor.fetchone()[0]
+    
+    if not bcrypt.checkpw(password.encode('utf-8'), currentPassword.encode('utf-8')):
+        return jsonify('Invalid Password'),422
+    
+    if changeEmail:
+        cursor.execute(f'update users set email="{email}" where id = {user_id}')
+    if changePassword:
+        password = bcrypt.hashpw(newPassword.encode("utf-8"),bcrypt.gensalt()).decode("utf-8")
+        cursor.execute(f'update users set password="{password}" where id = {user_id}')
+        
+    cursor.execute(f'update users set name="{name}" where id = {user_id}')
+    mysql.connection.commit()
+    return jsonify("Successfully updated user"),200
     
     
-
+    
+    
+    
+    
+    
+    
+    
+    
 
 @app.route('/migrate', methods=['POST'])
 def migration():
@@ -853,8 +887,23 @@ def migration():
     cursor.execute('''
         create table if not exists orders(
         id int primary key auto_increment,
-        users_id int not null,
+        name text not null,
         status char(1) not null,
+        size varchar(20) not null,
+        description text not null,
+        image text not null,
+        sku varchar(12) not null,
+        color varchar(24) not null,
+        price int unsigned not null,
+        sale smallint unsigned default 0,
+        categories_id int not null,
+        brands_id int not null,
+        genders_id int not null,
+        created_at datetime default now(),
+        users_id int not null,
+        foreign key(categories_id) references categories(id),
+        foreign key(brands_id) references brands(id),
+        foreign key(genders_id) references genders(id))
         foreign key(users_id) references users(id))
         ''')
     

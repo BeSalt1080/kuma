@@ -2,7 +2,10 @@
 import { ref } from 'vue';
 import { useAuthStore } from '../stores/auth.js'
 import ProfileIcon from './icons/ProfileIcon.vue';
-import router from '../router';
+import { useRouter } from 'vue-router';
+
+
+const router = useRouter()
 
 const isHovered = ref(0);
 
@@ -10,7 +13,7 @@ const store = useAuthStore()
 
 async function logout(){
     await store.logoutUser()
-    router.push('login');
+    router.push({name:'login'});
 }
 
 </script>
@@ -19,8 +22,8 @@ async function logout(){
         <div class="cursor-pointer flex gap-1">
             <ProfileIcon height="24px" />
         </div>
-        <div class="absolute w-full p-5" v-show="isHovered">
-            <div class="border bg-white -translate-x-20 py-2 text-sm shadow-md font-semibold" >
+        <div class="absolute w-40 pt-5 z-50 right-0" v-show="isHovered">
+            <div class="border bg-white py-2 text-sm shadow-md font-semibold" >
                 <div v-if="!store.isLoggedIn">
                     <RouterLink class="px-4 block p-2 hover:bg-green-400 transition-all ease-in-out" to="/login">
                         Login

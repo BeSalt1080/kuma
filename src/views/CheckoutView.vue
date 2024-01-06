@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import { authService } from '../api';
 import router from '../router';
 import { useOrderStore } from '@/stores/order';
-
+import PrimaryButton from '@/components/PrimaryButton.vue';
 
 const name = ref('')
 const province = ref('')
@@ -90,7 +90,7 @@ const proceed = async () => {
 </script>
 <template>
     <div class="flex flex-1 justify-center my-10">
-        <div class="w-5/6">
+        <div class="w-5/6 flex flex-col">
             <h1 class="text-center text-xl font-bold">Order Detail</h1>
             <div class="px-10 grid grid-cols-3 gap-20">
                 <div class="">
@@ -213,8 +213,7 @@ const proceed = async () => {
                     </div>
                 </div>
             </div>
-            <button @click="proceed"
-                class="block text-center mt-5 p-4 bg-green-400 hover:bg-green-300 w-1/3 mx-auto">Proceed To Payment</button>
+            <PrimaryButton class="mt-6 w-1/2 mx-auto" @click="proceed">Proceed To Payment</PrimaryButton>
         </div>
     </div>
 </template>

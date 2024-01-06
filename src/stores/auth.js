@@ -16,24 +16,24 @@ export const useAuthStore = defineStore("auth", () => {
     const response = await authService.post("/login", user, {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
-    isLoggedIn.value = true
     return response;
   }
   async function logoutUser() {
-    const response = await authService.post("/logout",'');
-    if(response.status==200)
-    {
-      isLoggedIn.value = false
-      user.value = {}
+    const response = await authService.post("/logout", "");
+    if (response.status == 200) {
+      isLoggedIn.value = false;
+      user.value = {};
     }
   }
-  async function fetchUser(){
-    const response = await authService.post('/check','')
-    if(response.status==200)
-    {
-      isLoggedIn.value = true
-      user.value = response.data
-    }
+  async function fetchUser() {
+    await authService.post("/check", "").then((response) => {
+      if (response.status == 200) {
+        isLoggedIn.value = true;
+        user.value = response.data;
+      }
+    }).catch(()=>{
+      
+    });
   }
   return { user, isLoggedIn, loginUser, registerUser, fetchUser, logoutUser };
 });

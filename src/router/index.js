@@ -134,10 +134,22 @@ const router = createRouter({
       props: { category: "Kids" },
     },
     {
+      path: "/kids/:categories",
+      name: "kids",
+      component: ProductView,
+      props: { category: "Kids" },
+    },
+    {
       path: "/cart",
       name: "cart",
       component: CartView,
       meta: { requiresAuth: true },
+    },
+    {
+      path: "/search",
+      name: "search",
+      component: ProductView,
+      props: { category: "Search" },
     },
     {
       path: "/order",
@@ -323,20 +335,22 @@ router.beforeEach(async (to, from, next) => {
       next();
     }
   }
-  if (to.matched.some((record) => record.meta.isGuest)) {
+  else if (to.matched.some((record) => record.meta.isGuest)) {
     if (store.isLoggedIn) {
       next({ name: "home" });
     } else {
       next();
     }
   }
-  if (to.matched.some((record) => record.meta.isAdmin)) {
+  else if (to.matched.some((record) => record.meta.isAdmin)) {
     if (store.user.role != undefined) {
       if (store.user.role == 1) {
         next();
       }
+      else next({ name: "home" });
+    } else {
+      next({ name: "home" });
     }
-    next({ name: "home" });
   }
-  next();
+  else next();
 });

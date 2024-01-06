@@ -5,7 +5,7 @@ import { RouterLink } from "vue-router";
 <template>
   <div class="flex flex-col gap-5 items-center px-12 py-10 text-white">
     <div
-      class="w-full py-36 bg-[url('/images/banner_slider_odd_-_nike_airmax_1_2732x1386__2.webp')] flex items-center justify-center"
+      class="w-full py-36 bg-[url('/images/banner1.webp')] flex items-center justify-center"
     >
       <div>
         <RouterLink to="/" class="select-none font-bold text-4xl"

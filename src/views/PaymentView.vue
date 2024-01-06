@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { useOrderStore } from '../stores/order.js'
 import { authService } from '@/api';
+import { useRouter } from 'vue-router';
 
 const address = ref('')
 const shipping = ref('')
@@ -11,7 +12,7 @@ const store = useOrderStore()
 const paymentOption = ref('')
 const subtotal = ref(0);
 
-
+const router = useRouter()
 const fetchData = async () => {
     try {
         let response = await authService.get('/shipping_get');
@@ -45,8 +46,12 @@ const proceed = async () => {
     const data = JSON.stringify({
         products: products
     })
-    console.log(data);
-    await authService.post('/order', data, { headers: { 'Content-Type': 'application/JSON' } })
+    
+    await authService.post('/order', data, { headers: { 'Content-Type': 'application/JSON' } }).then(response=>{
+        if(response.status == 201)
+        router.push({name:'home'})
+    })
+    
 }
 
 onMounted(() => {

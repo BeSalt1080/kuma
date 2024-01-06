@@ -3,7 +3,7 @@ import { ref } from "vue";
 
 export const useOrderStore = defineStore("order", () => {
   const expedition = ref(0);
-  const persist = true;
+  const order_id = ref(0);
 
-  return { expedition }
+  return { expedition, order_id }
 },{persist:true});

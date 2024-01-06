@@ -3,6 +3,7 @@ import UserLayout from '@/views/layouts/UserLayout.vue'
 
 import { onMounted, ref } from 'vue';
 import { authService } from '@/api';
+import PrimaryButton from '@/components/PrimaryButton.vue';
 
 const name = ref('')
 const province = ref('')
@@ -15,7 +16,8 @@ const carts = ref('');
 const subtotal = ref(0);
 const expedition = ref('')
 const shipping = ref([])
-const haveAddress = ref('')
+const haveAddress = ref(false)
+const msg = ref('')
 
 const fetchData = async () => {
     try {
@@ -66,9 +68,8 @@ const proceed = async () => {
             }
         });
         if (response.status == 201) {
-            const store = useOrderStore()
-            store.expedition = expedition.value
-            router.push({ name: "order.payment" })
+            msg.value = response.data
+            setTimeout(()=>{msg.value=''},3000)
         }
     }
     else {
@@ -78,48 +79,51 @@ const proceed = async () => {
             }
         });
         if (response.status == 200) {
-            const store = useOrderStore()
-            store.expedition = expedition.value
-            router.push({ name: "order.payment" })
+            msg.value = response.data
+            setTimeout(()=>{msg.value=''},3000)
+e
         }
     }
 }
 </script>
 <template>
-    <UserLayout>
+    <UserLayout :title="haveAddress?'Edit Address':'Add Address'">
         <div class="p-5">
-            <span class="text-sm">Please enter your delivery below:</span>
-            <table class="w-full">
-                <tr>
-                    <label class="font-bold" for="name">Full Name</label>
-                    <input class="block w-full" type="text" id="name" v-model="name">
-                </tr>
-                <tr>
-                    <label class="font-bold" for="province">Province</label>
-                    <input class="block w-full" type="text" id="province" v-model="province">
-                </tr>
-                <tr>
-                    <label class="font-bold" for="city">City</label>
-                    <input class="block w-full" type="text" id="city" v-model="city">
-                </tr>
-                <tr>
-                    <label class="font-bold" for="subdistrict">Subdistrict</label>
-                    <input class="block w-full" type="text" id="subdistrict" v-model="subdistrict">
-                </tr>
-                <tr>
-                    <label class="font-bold" for="postcode">Postcode</label>
-                    <input class="block w-full" type="text" id="postcode" v-model="postcode">
-                </tr>
-                <tr>
-                    <label class="font-bold" for="phone">Phone Number</label>
-                    <input class="block w-full" type="text" id="phone" v-model="phone">
-                </tr>
-                <tr>
-                    <label class="font-bold" for="address">Address</label>
-                    <input class="block w-full" type="text" id="address" v-model="address">
-                </tr>
-            </table>
-            <button @click="proceed">Update</button>
+            <p class="bg-green-400 text-white font-bold p-5" v-if="msg">{{ msg }}</p>
+            <form @submit.prevent="proceed">
+
+                <table class="w-full">
+                    <tr>
+                        <label class="font-bold" for="name">Full Name</label>
+                        <input class="block w-full" type="text" id="name" v-model="name">
+                    </tr>
+                    <tr>
+                        <label class="font-bold" for="province">Province</label>
+                        <input class="block w-full" type="text" id="province" v-model="province">
+                    </tr>
+                    <tr>
+                        <label class="font-bold" for="city">City</label>
+                        <input class="block w-full" type="text" id="city" v-model="city">
+                    </tr>
+                    <tr>
+                        <label class="font-bold" for="subdistrict">Subdistrict</label>
+                        <input class="block w-full" type="text" id="subdistrict" v-model="subdistrict">
+                    </tr>
+                    <tr>
+                        <label class="font-bold" for="postcode">Postcode</label>
+                        <input class="block w-full" type="text" id="postcode" v-model="postcode">
+                    </tr>
+                    <tr>
+                        <label class="font-bold" for="phone">Phone Number</label>
+                        <input class="block w-full" type="text" id="phone" v-model="phone">
+                    </tr>
+                    <tr>
+                        <label class="font-bold" for="address">Address</label>
+                        <input class="block w-full" type="text" id="address" v-model="address">
+                    </tr>
+                </table>
+                <PrimaryButton class="my-2" @click="proceed">{{haveAddress?'Update':'Add'}}</PrimaryButton>
+            </form>
         </div>
     </UserLayout>
 </template>

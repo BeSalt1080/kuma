@@ -17,7 +17,7 @@ defineProps({
             <router-link class="border-y text-xl" :to="{name:'account.info'}"><i class="me-2 fa-solid fa-circle-info"></i>Account Information</router-link>
             <router-link class="border-y" :to="{name:'wishlist'}"><i class="me-2 fas fa-heart"></i>My Wishlist</router-link>
         </div>
-        <div class="w-full">
+        <div class="w-full p-5">
             <slot/>
         </div>
     </div>

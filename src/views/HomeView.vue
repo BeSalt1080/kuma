@@ -1,6 +1,19 @@
 <script setup>
+import Carousel from '@/components/Carousel.vue';
+import { ref } from 'vue';
+
+const images = ref([
+  '/images/banner1.webp',
+  '/images/banner2.webp',
+  '/images/banner3.webp',
+  '/images/banner4.webp',
+  '/images/banner5.webp',
+  '/images/banner6.webp',
+  '/images/banner7.webp',
+]);
+
 </script>
 
 <template>
-    <img  src="/images/banner_slider_odd_-_nike_airmax_1_2732x1386__2.webp" alt="">
+  <Carousel :images="images"/>
 </template>
